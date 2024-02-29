@@ -73,11 +73,11 @@ const questions = [
   }
 ];
 
-function Result() {
+function Result({ correct }) {
   return (
     <div className='result'>
       <img src="https://cdn-icons-png.flaticon.com/512/2278/2278992.png" />
-      <h2>Sie haben 3 von 10 Antworten erraten</h2>
+      <h2>Sie haben {correct} von { questions.length } Antworten erraten</h2>
       <a href="/">
         <button>Nochmal versuchen</button>
       </a>
@@ -85,17 +85,21 @@ function Result() {
   );
 }
 
-function Game() {
+function Game({ step, question, onClickVariant }) {
+  const percentage = Math.round((step / questions.length) * 100);
+
   return (
     <>
       <div className="progress">
-        <div style={{ width: `50%` }} className="progress__inner"></div>
+        <div style={{ width: `${percentage}%` }} className="progress__inner"></div>
       </div>
-      <h1>Question</h1>
+      <h1>{ question.title }</h1>
       <ul>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
+        {question.variants.map((variant, index) => 
+          <li onClick={() => onClickVariant(index)} key={index}>
+            {variant}
+          </li>
+        )}
       </ul>
     </>
   );
@@ -108,7 +112,6 @@ function App() {
   const question = questions[step];
 
   const onClickVariant = (index) => {
-    console.log('step', step, 'index', index);
     setStep(step + 1);
 
     if (index === question.correct) {
